@@ -1,0 +1,29 @@
+services:
+
+    evm_admin:
+        image: ${EVM_ADMIN_IMAGE}:nginx_${EVM_ADMIN_TAG}
+        build:
+            args:
+                PHP_PROXY: $PHP_HOST:$PHP_PORT
+            context: .
+            dockerfile: dockerfile/nginx/Dockerfile
+        env_file: ./.env
+        restart: unless-stopped
+        ports:
+            - $PORT:$PORT
+
+    php:
+        image: ${EVM_ADMIN_IMAGE}:${EVM_ADMIN_TAG}
+        build:
+            args:
+                PHP_PORT: $PHP_PORT
+            context: .
+            dockerfile: dockerfile/php/Dockerfile
+            target: ${ENVIRONMENT}
+        env_file: ./.env
+        restart: unless-stopped
+        ports:
+            - $PHP_PORT:$PHP_PORT
+        volumes:
+            - ./:/var/www/html:delegated
+            - /var/www/html/vendor

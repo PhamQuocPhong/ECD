@@ -22,9 +22,9 @@ class UserController extends Controller
     public function fetchAll(Request $request)
     {
         DB::beginTransaction();
-        $form = $request->all();
+        $params = $request->all();
         try {
-            $users = $this->service->fetchAll($form);
+            $users = $this->service->fetchAll($params);
             DB::commit();
             return response()->json(["data" => $users]);
         } catch (Exception $e) {

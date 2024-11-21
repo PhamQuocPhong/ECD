@@ -3,5 +3,5 @@ namespace App\Repositories\User;
 
 interface UserRepositoryInterface
 {
-  public function fetchByCondition1(array $condition, $orderBy = null);
+  public function fetchAllByCondition(array $condition, $orderBy = null);
 }

@@ -14,7 +14,7 @@ return array(
     */
 
     'config' => [
-        'hosts'     => ['localhost:9200'],
+        'hosts'     => ["http://elastic:changeme@localhost:9200"],
         'retries'   => 1,
     ],
 
@@ -27,6 +27,6 @@ return array(
     | Elasticquent models.
     */
 
-    'default_index' => 'my_custom_index_name',
+    'default_index' => 'users',
 
 );

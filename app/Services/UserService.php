@@ -17,14 +17,14 @@ class UserService
       $this->userRepo = $userRepo;
     }
 
-    public function fetchAll()
+    public function fetchAll($params)
     {
 
-      dd(Cache::pull("allUsers"));
-
-      $users = Cache::remember('allUsers', 60, function () {
-        return $this->userRepoRedis->fetchAll();
+      $users = Cache::remember('allUsers', 60, function() use ($params) {
+        return $this->userRepo->fetchAllByCondition($params);
       });
+      dd($users);
+
       return $users; 
     }
 

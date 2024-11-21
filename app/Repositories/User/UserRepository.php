@@ -20,8 +20,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterfaceRe
      */
 
 
-    public function fetchByCondition1(array $condition, $orderBy = null)
+    public function fetchAllByCondition(array $condition, $orderBy = null)
     {
-        dd(1);
+        $response = $this->model->search($condition);
+
     }
 }

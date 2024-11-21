@@ -44,6 +44,7 @@ class User extends Authenticatable
     ];
 
     protected $mappingProperties = [
+        
         'name' => [
           'type' => 'text',
           "analyzer" => "standard",
@@ -53,4 +54,5 @@ class User extends Authenticatable
           "analyzer" => "standard",
         ],
     ];
+
 }

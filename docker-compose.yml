@@ -1,19 +1,19 @@
 services:
-  # elasticsearch:
-  #   image: elasticsearch:7.8.1
-  #   ports:
-  #     - 9200:9200
-  #   environment:
-  #     discovery.type: 'single-node'
-  #     xpack.security.enabled: 'true'
-  #     ELASTIC_PASSWORD: 'changeme'
-  # kibana:
-  #   image: kibana:7.8.1
-  #   volumes:
-  #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-  #   ports:
-  #     - 5601:5601
-  evm_admin:
+  elasticsearch:
+    image: elasticsearch:7.8.1
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'true'
+      ELASTIC_PASSWORD: 'changeme'
+  kibana:
+    image: kibana:7.8.1
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+  ecd:
     image: ${ECD_IMAGE}:nginx_${ECD_TAG}
     build:
         args:
@@ -24,6 +24,8 @@ services:
     restart: unless-stopped
     ports:
         - $PORT:80
+    volumes:
+      - C:/xampp/htdocs/develop/ECD:/var/www/html/storage
   php:
       image: ${ECD_IMAGE}:${ECD_TAG}
       build:
@@ -36,5 +38,19 @@ services:
       restart: unless-stopped
       ports:
           - $PHP_PORT:$PHP_PORT
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678a
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9999:80
+    environment:
+      - PMA_ARBITRARY=1
+
 
 

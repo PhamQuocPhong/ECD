@@ -26,6 +26,8 @@ services:
     restart: unless-stopped
     ports:
         - $PORT:80
+    volumes:
+      - C:/xampp/htdocs/develop/ECD:/var/www/html/storage
   php:
       image: ${ECD_IMAGE}:${ECD_TAG}
       build:
@@ -56,7 +58,6 @@ services:
       - 9999:80
     environment:
       - PMA_ARBITRARY=1
-
 
 
 

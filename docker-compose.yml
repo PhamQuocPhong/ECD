@@ -1,23 +1,25 @@
 services:
-  # elasticsearch:
-  #   image: elasticsearch:7.8.1
-  #   ports:
-  #     - 9200:9200
-  #   environment:
-  #     discovery.type: 'single-node'
-  #     xpack.security.enabled: 'true'
-  #     ELASTIC_PASSWORD: 'changeme'
-  # kibana:
-  #   image: kibana:7.8.1
-  #   volumes:
-  #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-  #   ports:
-  #     - 5601:5601
-  evm_admin:
+  elasticsearch:
+    image: elasticsearch:7.8.1
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'true'
+      ELASTIC_PASSWORD: 'changeme'
+  kibana:
+    image: kibana:7.8.1
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+  ecd:
     image: ${ECD_IMAGE}:nginx_${ECD_TAG}
     build:
         args:
             PHP_PROXY: $PHP_HOST:$PHP_PORT
+            UID: 1000
+            GID: 1000
         context: .
         dockerfile: dockerfiles/nginx/Dockerfile
     env_file: ./.env
@@ -29,6 +31,8 @@ services:
       build:
           args:
               PHP_PORT: $PHP_PORT
+              UID: 1000
+              GID: 1000
           context: .
           dockerfile: dockerfiles/php/Dockerfile
           target: ${ENVIRONMENT}
@@ -36,5 +40,23 @@ services:
       restart: unless-stopped
       ports:
           - $PHP_PORT:$PHP_PORT
+      volumes:
+          - ./:/var/www/html:delegated
+          - /var/www/html/vendor
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678a
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9999:80
+    environment:
+      - PMA_ARBITRARY=1
+
+
 
 

@@ -5,6 +5,8 @@ FROM base AS deps
 
 # Arguments defined
 ARG PHP_PORT
+ARG UID
+ARG GID
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -24,7 +26,7 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install composer
-RUN composer install --ignore-platform-reqs --no-dev --optimize-autoloader
+RUN composer install --ignore-platform-reqs require-dev  --optimize-autoloader
 RUN composer clear-cache
 RUN composer dump-autoload
 
@@ -35,6 +37,12 @@ FROM deps AS runner
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
 RUN echo 'memory_limit = 1024M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 RUN echo 'max_execution_time=60' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;
+
+# Install tools and create group/user
+RUN apk add --no-cache shadow && \
+    groupmod -g $GID www-data && \
+    usermod -u $UID -g www-data www-data && \
+    apk del shadow
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data ./ /var/www/html/

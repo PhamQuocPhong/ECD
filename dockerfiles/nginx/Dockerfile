@@ -3,6 +3,13 @@ FROM nginx:stable-alpine
 # Arguments defined
 ARG PHP_PROXY
 ARG PORT
+ARG UID
+ARG GID
+
+RUN apk add --no-cache shadow && \
+    groupmod  -g $GID nginx && \
+    usermod -u $UID -g nginx nginx && \
+    apk del shadow
 
 RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./dockerfiles/nginx/ecd.conf /etc/nginx/conf.d/

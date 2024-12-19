@@ -19,7 +19,7 @@ class UserService
 
     public function fetchAll($params)
     {
-
+		dd(1);
       $users = Cache::remember('allUsers', 60, function() use ($params) {
         return $this->userRepo->fetchAllByCondition($params);
       });

@@ -13,6 +13,20 @@ services:
       - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - 5601:5601
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678a
+    volumes:
+      - mysql-ecd:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9999:80
+    environment:
+      - PMA_ARBITRARY=1
   ecd:
     image: ${ECD_IMAGE}:nginx_${ECD_TAG}
     build:
@@ -44,20 +58,11 @@ services:
           - $PHP_PORT:$PHP_PORT
       volumes:
           - ./:/var/www/html:delegated
-          - /var/www/html/vendor
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345678a
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 9999:80
-    environment:
-      - PMA_ARBITRARY=1
-
+          - vendor:/var/www/html/vendor
+volumes:
+  vendor:
+    driver: local
+  mysql-ecd:
+    driver: local
 
 

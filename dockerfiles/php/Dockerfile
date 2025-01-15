@@ -26,10 +26,11 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install composer
-RUN composer install --ignore-platform-reqs require-dev  --optimize-autoloader
+RUN composer update
+RUN composer install --ignore-platform-reqs
 RUN composer clear-cache
 RUN composer dump-autoload
-RUN php artisan migrate
+# RUN php artisan migrate
 
 ## 3. Running application
 FROM deps AS runner

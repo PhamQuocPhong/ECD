@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        
 
         $this->app->singleton(
             \App\Repositories\User\UserRepositoryInterfaceRedis::class,
@@ -23,6 +23,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             \App\Repositories\User\UserRepositoryInterface::class,
             \App\Repositories\User\UserRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\Post\PostRepositoryInterface::class,
+            \App\Repositories\Post\PostRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\AccessToken\AccessTokenRepositoryInterface::class,
+            \App\Repositories\AccessToken\AccessTokenRepository::class
         );
     }
 

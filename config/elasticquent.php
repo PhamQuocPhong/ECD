@@ -14,7 +14,7 @@ return array(
     */
 
     'config' => [
-        'hosts'     => ["http://elastic:changeme@192.168.1.200:9200"],
+        'hosts'     => ["http://elastic:changeme@ecd-elasticsearch-1:9200"],
         'retries'   => 1,
     ],
 

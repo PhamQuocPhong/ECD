@@ -21,14 +21,20 @@ class PostRepository extends BaseRepository
      */
 
 
-    public function fetchAllByCondition(array $condition, $orderBy = null)
+    public function fetchAllByCondition(array $params, $orderBy = null)
     {
         // $query = ['match' => ['email' => 'grimes.adaline@example.com']];
         // $sourceFields = ['id', 'name', 'email'];
 
         // $response = $this->model->searchByQuery($query, null, $sourceFields, self::USER_LIMIT);
-        $response = $this->model->with("user")->get();
-        return $response;
+        $model = $this->model->with("user");
+        $titleRequest = data_get($params, "title");
+        if($titleRequest)
+        {
+            $model = $model->where("title", "LIKE", "%" . $titleRequest . "%");
+        }
+    
+        return $model->get();
     }
 
 }

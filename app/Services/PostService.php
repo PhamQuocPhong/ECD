@@ -7,6 +7,7 @@ use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
+
 class PostService
 {
     public $postRepo;
@@ -18,9 +19,13 @@ class PostService
         $this->userRepo = $userRepo;
     }
 
-    public function fetchAll($params)
+    public function fetchAllByCondition($params)
     {
-        $posts = $this->postRepo->fetchAllByCondition($params);
+    
+        $posts =  Cache::remember('post_all', 60, function() use($params) {
+            return $this->postRepo->fetchAllByCondition($params);
+        });
+
         return $posts; 
     }
 

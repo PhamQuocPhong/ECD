@@ -9,10 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Elasticquent\ElasticquentTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Traits\UserCreatePost;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, ElasticquentTrait;
+    use HasApiTokens, HasFactory, Notifiable, ElasticquentTrait, UserCreatePost;
 
     /**
      * The attributes that are mass assignable.

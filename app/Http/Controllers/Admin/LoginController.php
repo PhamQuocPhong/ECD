@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TokenRequest;
-use App\Services\AuthService;
+use App\Http\Requests\Admin\LoginRequest;
+use App\Services\Admin\AuthService;
 use Illuminate\Http\Request;
-use JWTAuth;
+use Illuminate\Support\Facades\Log;
 use DB;
 
-class TokenController extends Controller
+
+class LoginController extends Controller
 {
     private $service;
 
@@ -18,16 +19,15 @@ class TokenController extends Controller
         $this->service = $service;
     }
 
-    public function refreshToken(Request $request)
+    public function login(LoginRequest $request)
     {
         DB::beginTransaction();
-
+        $requestData = (object) $request->only('email', 'password');
         try {
-            $accessToken = $this->service->refreshToken();
-            $dataResponse = ["accessToken" => $accessToken];
+            $dataResponse = $this->service->handleLogin($requestData);
+
             $message = null;
             $statusCode = 200;
-
             DB::commit();
             return showResponse($dataResponse, $message, $statusCode);
         } catch (Exception $e) {
@@ -35,5 +35,6 @@ class TokenController extends Controller
             throw $exception;
         }
     }
+
 
 }

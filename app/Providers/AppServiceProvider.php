@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use Laravel\Passport\Passport;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,5 +44,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Passport::routes();
+        
+        Passport::tokensExpireIn(now()->addDays(1));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }

@@ -11,8 +11,9 @@ ARG GID
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
-    pdo_mysql
-
+    pdo_mysql \
+    pcntl \
+    && docker-php-ext-enable pcntl 
 
 ## Installing PHP and additional dependencies
 FROM deps AS composer

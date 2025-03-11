@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
-use App\Services\PostService;
-use App\Http\Requests\PostRequest;
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Services\Admin\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Exception;
-use JWTAuth;
 use DB;
 
 
-class PostController extends Controller
+class UserController extends Controller
 {
     //
     private $service;
 
-    public function __construct(PostService $service)
+    public function __construct(UserService $service)
     {
         $this->service = $service;
     }
@@ -25,9 +26,9 @@ class PostController extends Controller
         DB::beginTransaction();
         $params = $request->all();
         try {
-            $posts = $this->service->fetchAllByCondition($params);
+            $users = $this->service->fetchAll($params);
             DB::commit();
-            return response()->json(["data" => $posts]);
+            return response()->json(["data" => $users]);
         } catch (Exception $e) {
             DB::rollback();
             Log::debug($e->getMessage());
@@ -35,13 +36,17 @@ class PostController extends Controller
         }
     }
 
-    public function fetch($id)
+    public function batchEmailNotifications(Request $request)
     {
+
         DB::beginTransaction();
+        $params = $request->all();
         try {
-            $post = $this->service->fetch($id);
+            $users = $this->service->fetchAll($params);
+            $this->service->handleBatchMailNotifications($users);
+
             DB::commit();
-            return response()->json(["data" => $post]);
+            return response()->json(["data" => $users]);
         } catch (Exception $e) {
             DB::rollback();
             Log::debug($e->getMessage());
@@ -49,16 +54,19 @@ class PostController extends Controller
         }
     }
 
-    public function store(PostRequest $request)
+    public function bulkCretePosts(Request $request)
     {
-        DB::beginTransaction();
-        $requestData =  (object) $request->only('title', 'description');
-        $requestData->currentUser = JWTAuth::user();
 
+        DB::beginTransaction();
+        $params = $request->all();
+        
         try {
-            $post = $this->service->store($requestData);
+            $users = $this->service->fetchAllByCondition($params);            
+            $this->service->handleBulkCretePosts($users);
+            $message = null;
+            $statusCode = 200;
             DB::commit();
-            return response()->json(["data" => $post]);
+            return showResponse($users, $message, $statusCode);
         } catch (Exception $e) {
             DB::rollback();
             Log::debug($e->getMessage());

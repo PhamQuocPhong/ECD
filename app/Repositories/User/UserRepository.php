@@ -27,11 +27,22 @@ class UserRepository extends BaseRepository implements
 
     public function fetchAllByConditionElastic(array $params, $orderBy = null)
     {
-        $query = ['match' => ['email' => 'grimes.adaline@example.com']];
-        $sourceFields = ['id', 'name', 'email'];
+        $query = ['match' => $params];
+        $sourceFields = ['id', 'name', 'email', 'email_verified_at', 'remember_token', 'created_at'];
 
         $users = $this->model->searchByQuery($query, null, $sourceFields, self::USER_LIMIT);
         return $users;
+    }
+
+    public function fetchAllByCondition(array $params, $orderBy = null)
+    {
+        $model = $this->model;
+        $nameRequest = data_get($params, "name");
+        if($nameRequest)
+        {
+            $model = $model->where("name", "LIKE", "%" . $nameRequest . "%");
+        }
+        return $model->get();
     }
 
     public function fetchAllByConditionRedis(array $params, $orderBy = null)

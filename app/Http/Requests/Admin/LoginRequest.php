@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 use Illuminate\Contracts\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Http\FormRequest;

@@ -27,11 +27,6 @@ class LoginController extends Controller
         try {
             $accessToken = $this->service->handleLogin($requestData);
 
-            $currentUser = JWTAuth::user();
-            $requestData->userId = $currentUser->id;
-            $requestData->token = $accessToken;
-            $this->service->storeAccessToken($requestData);
-
             $dataResponse = ["accessToken" => $accessToken];
             $message = null;
             $statusCode = 200;
@@ -42,5 +37,4 @@ class LoginController extends Controller
             throw $exception;
         }
     }
-
 }

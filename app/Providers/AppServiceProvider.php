@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use Laravel\Passport\Passport;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        
 
         $this->app->singleton(
             \App\Repositories\User\UserRepositoryInterfaceRedis::class,
@@ -23,6 +23,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             \App\Repositories\User\UserRepositoryInterface::class,
             \App\Repositories\User\UserRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\Post\PostRepositoryInterface::class,
+            \App\Repositories\Post\PostRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\AccessToken\AccessTokenRepositoryInterface::class,
+            \App\Repositories\AccessToken\AccessTokenRepository::class
         );
     }
 
@@ -34,5 +44,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Passport::routes();
+        
+        Passport::tokensExpireIn(now()->addDays(1));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }

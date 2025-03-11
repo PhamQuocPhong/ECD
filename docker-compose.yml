@@ -7,12 +7,34 @@ services:
       discovery.type: 'single-node'
       xpack.security.enabled: 'true'
       ELASTIC_PASSWORD: 'changeme'
+    networks:
+      - laravel
   kibana:
     image: kibana:7.8.1
     volumes:
       - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - 5601:5601
+    networks:
+      - laravel
+  db:
+    image: mysql
+    restart: always
+    volumes:
+      - mysql-ecd:/var/lib/mysql
+    networks:
+      - laravel
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9999:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - laravel
+    depends_on:
+      - db
   ecd:
     image: ${ECD_IMAGE}:nginx_${ECD_TAG}
     build:
@@ -28,6 +50,8 @@ services:
         - $PORT:80
     volumes:
       - C:/xampp/htdocs/develop/ECD:/var/www/html/storage
+    networks:
+      - laravel
   php:
       image: ${ECD_IMAGE}:${ECD_TAG}
       build:
@@ -44,20 +68,22 @@ services:
           - $PHP_PORT:$PHP_PORT
       volumes:
           - ./:/var/www/html:delegated
-          - /var/www/html/vendor
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345678a
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
+          - vendor:/var/www/html/vendor
+      networks:
+          - laravel
+  redis:
+    image: redis:alpine
+    container_name: laravel_redis
+    networks:
+      - laravel
     ports:
-      - 9999:80
-    environment:
-      - PMA_ARBITRARY=1
+      - "6379:6379"
+volumes:
+  vendor:
+    driver: local
+  mysql-ecd:
+    driver: local
 
-
-
+networks:
+  laravel:
+    driver: bridge

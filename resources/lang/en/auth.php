@@ -16,5 +16,11 @@ return [
     'failed' => 'These credentials do not match our records.',
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'unauthorize' => 'Unauthorized.',
 
+    'invalid_email_or_password' => 'Invalid email or password.',
+    'token_invalid' => 'Token is invalid.',
+    'token_expired' => 'Token is expired',
+    'token_required' => 'Token is required.',
+    'store_access_token_failed' => 'Store access token failed',
 ];

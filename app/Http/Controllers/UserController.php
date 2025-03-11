@@ -21,13 +21,6 @@ class UserController extends Controller
 
     public function fetchAll(Request $request)
     {
-        try {
-            DB::connection()->getPdo();
-        } catch (\Exception $e) {
-            die("Could not connect to the database.  Please check your configuration. error:" . $e );
-        }
-
-
         DB::beginTransaction();
         $params = $request->all();
         try {

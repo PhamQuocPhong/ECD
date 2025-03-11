@@ -5,6 +5,7 @@ use App\Repositories\User\UserRepositoryInterfaceRedis;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
 use Redis;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -19,11 +20,11 @@ class UserService
 
     public function fetchAll($params)
     {
-		dd(1);
-      $users = Cache::remember('allUsers', 60, function() use ($params) {
-        return $this->userRepo->fetchAllByCondition($params);
-      });
-      dd($users);
+      $users = $this->userRepo->fetchAllByConditionElastic($params);
+      // $users = Cache::remember('allUsers', 60, function() use ($params) {
+        
+      // });
+      // dd($users);
 
       return $users; 
     }
@@ -31,5 +32,16 @@ class UserService
     public function fetch($id)
     {
       return $this->userRepoRedis->fetchByCondition1([], []);
+    }
+
+    public function store($request)
+    {
+      $data = [
+        "name" => data_get($request->name),
+        "email" => data_get($request->email),
+        "password" =>  Hash::make($request->password)
+      ];
+      $user = $this->userRepo->store($data);
+      return $user; 
     }
 }

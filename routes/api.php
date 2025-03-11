@@ -15,19 +15,40 @@ use App\Models\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\TokenController;
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+use App\Http\Controllers\PostController;
 
 Route::get('/', function () {
-
-    return view('welcome');
+    User::addAllToIndex();
 });
 
-Route::group(['prefix' => 'users', 'as' => 'users.'], function(){
-    Route::get('/', [UserController::class, 'fetchAll'])->name('index');
-    Route::get('/{id}', [UserController::class, 'fetch'])->name('detail');
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::group(['middleware' => 'jwtAuth'], function(){
+    Route::post('/logout', [LogoutController::class, 'logout']);
+    Route::post('/refresh-token', [TokenController::class, 'refreshToken']);
+
+    Route::get('/me',  [ProfileController::class, 'me']);
+
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function(){
+        Route::get('/', [UserController::class, 'fetchAll'])->name('index');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{id}', [UserController::class, 'fetch'])->name('detail');
+    });
+    
+
 });
+
+
+Route::group(['prefix' => 'posts', 'as' => 'posts.'], function(){
+    Route::get('/', [PostController::class, 'fetchAll'])->name('index');
+    Route::post('/', [PostController::class, 'store'])->name('store');
+});
+
+
+
